@@ -1,5 +1,26 @@
 # Filadd - **Inteligencia sobre tus Datos con RAG**
 
+--- 
+
+## Te ayudamos a seguir creciendo con IA 🚀
+
+Si este ejercicio te gustó y querés seguir profundizando en el uso estratégico de la inteligencia artificial (tanto técnica como de negocio), te recomendamos estas formaciones aliadas:
+
+- **Kinetic Training – Inteligencia Artificial Generativa (Live Class):** para entender a fondo el potencial de la IA generativa en organizaciones y productos digitales.  
+  Más info: `https://kinetic-corp.com/training/formacion/inteligencia-artificial-generativa/`
+- **Kinetic Training – Workshop en Ciberseguridad (Live Class):** enfoque en ciberresiliencia activa, detección de anomalías con IA y automatización de respuestas (SOAR).  
+  Más info: `https://kinetic-corp.com/training/formacion/workshop-en-ciberseguridad/`
+- **Kinetic Training – IA en decisiones de negocios (Live Class):** uso de datos y modelos de IA para tomar mejores decisiones estratégicas desde el negocio.  
+  Más info: `https://kinetic-corp.com/training/formacion/ia-en-decisiones-de-negocios/`
+- **Kinetic Training – IA para Project Managers (On Demand):** cómo apoyarte en IA para planificar, monitorear y comunicar mejor en proyectos.  
+  Más info: `https://kinetic-corp.com/training/formacion/ia-para-project-managers/`
+- **Kinetic Training – Gestión de riesgos con IA (On Demand):** gestión de incertidumbre y riesgos alineada a PMBOK v7, apalancada con herramientas de IA.  
+  Más info: `https://kinetic-corp.com/training/formacion/gestion-de-riesgos-con-ia/`
+- **Pluralit – GenAI Pathway (Career Program):** programa intensivo de 4 meses para pivotear tu carrera hacia GenAI y arquitecturas agenticas, con proyectos reales y proyección global.  
+  Más info: `https://www.pluralit.ai/genaipathway`
+
+---
+
 ## Ejercicio Práctico — RAG con n8n + Supabase
 
 > **Objetivo:** Construir un sistema de preguntas y respuestas sobre un documento PDF usando RAG.  
