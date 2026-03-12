@@ -1,0 +1,276 @@
+{
+  "name": "Filadd - RAG - Indexación de Documentos",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🚀 Workflow de Indexación RAG\n\nEste workflow toma un PDF, lo divide en chunks, genera embeddings y los almacena en Supabase.\n\n**Antes de ejecutar:**\n1. Configura las credenciales de OpenAI y Supabase\n2. Reemplaza la URL del PDF en el nodo \"Descargar PDF\"\n3. Asegúrate de haber ejecutado el script SQL en Supabase",
+        "height": 230,
+        "width": 680,
+        "color": 6
+      },
+      "id": "2cd6c98c-d879-40da-9db6-d32e4a2bf403",
+      "name": "Sticky Note - Instrucciones",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ⚙️ Sub-nodos de IA\n\nEstos nodos se conectan automáticamente al Vector Store:\n- **Embeddings OpenAI**: genera los vectores (text-embedding-3-small)\n- **Data Loader**: procesa el contenido binario del PDF\n- **Text Splitter**: divide en chunks de 1000 chars con 200 de overlap",
+        "height": 226,
+        "width": 664,
+        "color": 6
+      },
+      "id": "bb0fac44-2ce2-4857-8892-3f143ad73366",
+      "name": "Sticky Note - Sub-nodos",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -32
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c38ce982-114f-41e9-9756-174be91e1074",
+      "name": "Inicio Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.argentina.gob.ar/sites/default/files/el_principito_saint_exupery.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "74d4ac0c-b29b-40f8-a219-bdcfc3ba0b1f",
+      "name": "Descargar PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "id": "6afb0c4b-bb4f-49d4-abec-692572142c90",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        896,
+        368
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "kedyqpmUW459DkCQ",
+          "name": "Filadd - Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "87fda804-4c10-4381-86e5-599aac15e056",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        624,
+        384
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "h3erCpVcUxV11F3Z",
+          "name": "Filadd - OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "loader": "pdfLoader",
+        "options": {}
+      },
+      "id": "8c04bdac-8a19-471f-a90f-a49eb5a7144f",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        192,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 1500,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "id": "c4518f23-e873-4baf-99e5-ce976abacb33",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        288,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 📄 Ingesta",
+        "height": 374,
+        "width": 296
+      },
+      "id": "bbd2af79-9839-43de-9bde-71583926024f",
+      "name": "Sticky Note - Instrucciones1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 🧱 Procesamiento (chunking)",
+        "height": 374,
+        "width": 360,
+        "color": 5
+      },
+      "id": "c3ca94d9-56e6-42f2-a084-c9936b75eba2",
+      "name": "Sticky Note - Instrucciones2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 💡 Comprensión (embeddings)",
+        "height": 374,
+        "width": 296,
+        "color": 3
+      },
+      "id": "6f3d028b-96a0-4e6b-abfa-ecf9ccee9e81",
+      "name": "Sticky Note - Instrucciones3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 🗃️ Almacenamiento (vectores)",
+        "height": 374,
+        "width": 344,
+        "color": 4
+      },
+      "id": "00f087ba-a497-4570-96bc-9cbf76d3da3e",
+      "name": "Sticky Note - Instrucciones4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        240
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Inicio Manual": {
+      "main": [
+        [
+          {
+            "node": "Descargar PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar PDF": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ff66244f-d09a-4786-985a-15cca3b08c9b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f458f969cddf972ceaf35208d02cdc3ef0ba916c5a208d7bf2cd85768586453"
+  },
+  "id": "3KfVgSqk4SxyOupV",
+  "tags": []
+}

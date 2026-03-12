@@ -1,0 +1,298 @@
+{
+  "name": "Filadd - RAG - Consulta de Documentos",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 💬 Workflow de Consulta RAG\n\nEste workflow crea un chatbot que responde preguntas usando los documentos indexados en Supabase.\n\n**Antes de ejecutar:**\n1. Configura las credenciales de OpenAI y Supabase\n2. Asegúrate de haber ejecutado el workflow de indexación primero\n3. Activa el workflow y abre el Chat para hacer preguntas\n",
+        "height": 246,
+        "width": 824,
+        "color": 6
+      },
+      "id": "0e365d42-9c3a-4dd9-85bd-15efb957a393",
+      "name": "Sticky Note - Instrucciones",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Modelo de Lenguaje\n\nGPT-4 con temperatura baja (0.2) para respuestas más precisas y consistentes.\n\nPuedes cambiar a **gpt-4o-mini** para reducir costos en pruebas.",
+        "height": 248,
+        "width": 272,
+        "color": 6
+      },
+      "id": "3b9a945c-05d2-4c28-853a-245382b0c669",
+      "name": "Sticky Note - Modelo",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔍 Búsqueda Vectorial\n\nEl agente usa esta herramienta para buscar en los documentos indexados.\n\nLa pregunta se convierte en embedding con el mismo modelo (text-embedding-3-small) y se buscan los chunks más similares en Supabase usando la función match_documents.",
+        "height": 248,
+        "width": 348,
+        "color": 6
+      },
+      "id": "222af80f-7f30-4659-9574-796c354df7e4",
+      "name": "Sticky Note - Búsqueda",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "327e5def-a079-404d-a54b-365f0edf08a6",
+      "name": "Chat",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        352
+      ],
+      "webhookId": "rag-chat-webhook-id"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "id": "6aee124c-c4c0-466c-9e1e-a5fac37dca99",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        416
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "h3erCpVcUxV11F3Z",
+          "name": "Filadd - OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "839a03bf-28bc-4b77-b572-4a0f47a54279",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        656,
+        480
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "FP316yiYDvKjuOLe",
+          "name": "Rodel - OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemPromptTemplate": "Eres un asistente experto en el libro \"El Principito\" de Antoine de Saint Exupéry . \nTu función es responder preguntas basándote EXCLUSIVAMENTE en la información \nproporcionada por la herramienta de búsqueda en documentos.\n\nREGLAS ESTRICTAS:\n1. SIEMPRE usa la herramienta de búsqueda antes de responder.\n2. Responde ÚNICAMENTE con información encontrada en los documentos.\n3. Si la información no está disponible en los documentos, indica claramente: \n   \"No encontré información sobre este tema en los documentos consultados.\"\n4. Cuando cites información, menciona la fuente o sección relevante si está \n   disponible en los metadatos.\n5. Responde en el mismo idioma en que se hizo la pregunta.\n6. Sé conciso pero completo en tus respuestas.\n\nCONTEXTO:\n{context}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "typeVersion": 1.6,
+      "position": [
+        224,
+        352
+      ],
+      "id": "81f64df1-cbe3-4a70-bfab-83571b7c80f3",
+      "name": "Question and Answer Chain"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "typeVersion": 1,
+      "position": [
+        912,
+        304
+      ],
+      "id": "d506585f-7f3b-461f-a01d-1ac03736f091",
+      "name": "Vector Store Retriever"
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        448
+      ],
+      "id": "c80ebd96-ac95-46e8-bb56-53e932347d88",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kedyqpmUW459DkCQ",
+          "name": "Filadd - Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 👧🏻 Pregunta del usuario (query)",
+        "height": 376,
+        "width": 544
+      },
+      "id": "3d5d43f7-3bb6-46af-8efa-5dc238b5dd65",
+      "name": "Sticky Note - Modelo1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 💡 Comprensión (embedding)",
+        "height": 376,
+        "width": 272,
+        "color": 4
+      },
+      "id": "4a1dd27a-dd60-4558-8113-4b4c9803743c",
+      "name": "Sticky Note - Modelo2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 🔎 Búsqueda semántica (vector)",
+        "height": 376,
+        "width": 352,
+        "color": 5
+      },
+      "id": "eb2ec5f3-f359-47ff-8726-4c8f5e233dbf",
+      "name": "Sticky Note - Modelo3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 🤖 Generación de respuesta",
+        "height": 376,
+        "width": 272,
+        "color": 3
+      },
+      "id": "7add8c11-ab3e-4dac-a430-c005d3f70781",
+      "name": "Sticky Note - Modelo4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        224
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat": {
+      "main": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question and Answer Chain": {
+      "main": [
+        []
+      ]
+    },
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fac304a5-a1ba-43ae-bf4d-0b449c5896bc",
+  "meta": {
+    "instanceId": "7f458f969cddf972ceaf35208d02cdc3ef0ba916c5a208d7bf2cd85768586453"
+  },
+  "id": "C5eDpT1sr1V03pB6",
+  "tags": []
+}
